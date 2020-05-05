@@ -175,13 +175,14 @@ class ChangeDetector(Thread):
                     self.logger.info("ChangeDetector: detected motion. Starting capture...")
                     timestamp = self.get_formatted_time()
         # TODO: Thumb should be created from the photo itself, not the image that triggered the motion detection
-                    self.file_saver.save_thumb(img, timestamp, self.mode)
                     if self.mode == "photo":
                         image = self.camera_controller.get_hires_image()
+                        self.file_saver.save_thumb(imutils.resize(image, width=self.camera_controller.md_width), timestamp, self.mode)
                         self.file_saver.save_image(image, timestamp)
                         self.lastPhotoTime = self.get_fake_time()
                         self.logger.info("ChangeDetector: photo capture completed")
                     elif self.mode == "video":
+                        self.file_saver.save_thumb(img, timestamp, self.mode)
                         self.camera_controller.wait_recording(self.config["video_duration_after_motion"])
                         self.logger.info("ChangeDetector: video capture completed")
                         with self.camera_controller.get_video_stream().lock:
